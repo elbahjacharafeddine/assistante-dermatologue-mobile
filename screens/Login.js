@@ -25,11 +25,12 @@ export default function Login() {
   const api = 'http://192.168.137.1:8080'
   const dataUser ={
     "username":"lachgar",
-    "password":"admin"
+    "password":"password"
   }
   const handleSignIn = async () => {
     let response = await axios.post(api+"/api/authenticate",dataUser)
         .then(response =>{
+          console.log(response.data)
           const token = response.data.id_token;
           const object = JSON.parse(atob(token.split('.')[1]))
           if (object.auth ==="ROLE_DERMATOLOGUE"){
