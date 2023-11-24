@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from "expo-status-bar";
 
 
 import {
@@ -20,6 +21,8 @@ import jwt_decode from "jwt-decode";
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const [email, setEmail] = useState("");
   const navigation = useNavigation();
   const [showError, setError] = useState(false)
   const api = 'http://192.168.137.1:8080'
@@ -50,187 +53,74 @@ export default function Login() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <ImageBackground
-        source={require('./background.jpg')} // Remplacez le chemin par le chemin de votre image
-        style={styles.backgrooundcontainer}
-      >
-
 
         <View style={styles.container}>
-
-
-          <View style={styles.form}>
-            <View style={styles.input}>
-              <Text style={styles.inputLabel}>Email address</Text>
-              <TextInput
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                placeholder="qwerty@gmail.com"
-                placeholderTextColor="#6b7280"
-                value={username}
-                onChangeText={(text) => setUsername(text)}
-                style={[styles.inputControl, { backgroundColor: 'white', width: '100%' }] /* Ajoutez ce style */}
-              />
-            </View>
-
-
-            <View style={styles.input}>
-              <Text style={styles.inputLabel}>Password</Text>
-
-              <TextInput 
-                autoCorrect={false}
-                placeholder="********"
-                placeholderTextColor="#6b7280"
-                
-                secureTextEntry={true}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-                style={[styles.inputControl, styles.largeInput]}
-              />
-              {showError && <Text style={styles.message}>
-                Username or password incorrect
-              </Text>}
-            </View>
-
-
-            <View style={styles.formAction}>
-              <TouchableOpacity
-                onPress={handleSignIn}>
-                <View style={styles.btn}>
-                  <Text style={styles.btnText}>Sign in</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
+          {/*<Image style={styles.image} source={require("./assets/log2.png")} />*/}
+          <StatusBar style="auto" />
+          <View style={styles.inputView}>
+            <TextInput
+                style={styles.TextInput}
+                placeholder="Email."
+                placeholderTextColor="#003f5c"
+                onChangeText={(email) => setEmail(email)}
+            />
           </View>
+          <View style={styles.inputView}>
+            <TextInput
+                style={styles.TextInput}
+                placeholder="Password."
+                placeholderTextColor="#003f5c"
+                secureTextEntry={true}
+                onChangeText={(password) => setPassword(password)}
+            />
+          </View>
+          <TouchableOpacity>
+            <Text style={styles.forgot_button}>Forgot Password?</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.loginBtn}>
+            <Text style={styles.loginText}>LOGIN</Text>
+          </TouchableOpacity>
         </View>
-      </ImageBackground>
-    </SafeAreaView>
   );
 }
 
+
+
 const styles = StyleSheet.create({
-  message:{
-    color:'red',
-    fontSize:30,
-    textAlign:"center",
-  },
   container: {
-    padding: 24,
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    justifyContent: 'center', // Pour centrer verticalement
-    alignItems: 'center', // Pour centrer horizontalement
-
-  },
-  header: {
-    marginVertical: 36,
-  },
-  headerImg: {
-    width: 80,
-    height: 80,
-    alignSelf: 'center',
-    marginBottom: 36,
-  },
-  title: {
-    fontSize: 27,
-    fontWeight: '700',
-    color: '#1d1d1d',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#929292',
-    textAlign: 'center',
-  },
-  form: {
-    marginBottom: 24,
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  formAction: {
-    marginVertical: 24,
-  },
-  formFooter: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#222',
-    textAlign: 'center',
-    letterSpacing: 0.15,
-  },
-  input: {
-    marginBottom: 16,
-    width :' 100%'
-  },
-  inputLabel: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#222',
-    marginBottom: 8,
-    width :' 100%'
-  },
-  inputControl: {
-    height: 44,
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#222',
-    width: '100%',
-   // Vous pouvez ajuster la largeur ici (par exemple, 80%)
-  },
-  btn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderWidth: 1,
-    backgroundColor: '#075eec',
-    borderColor: '#075eec',
-    width :' 70%'
-  },
-  btnText: {
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: '600',
-    color: '#fff',
-    width :' 70%'
-  }, backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', // ou 'contain' pour d'autres options
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Couleur de superposition (ici, une superposition sombre)
+  image: {
+    marginBottom: 40,
+  },
+  inputView: {
+    backgroundColor: "#FFC0CB",
+    borderRadius: 30,
+    width: "70%",
+    height: 45,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  TextInput: {
+    height: 50,
     flex: 1,
+    padding: 10,
+    marginLeft: 20,
   },
-  text: {
-    fontSize: 24,
-    color: 'white',
-    textAlign: 'center',
-    marginTop: 50,
+  forgot_button: {
+    height: 30,
+    marginBottom: 30,
   },
-  background: {
-    flex: 1,
-    resizeMode: 'cover', // ou 'contain' pour ajuster l'image
-  }, backgrooundcontainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)', // Couleur d'arrière-plan de la vue
+  loginBtn: {
+    width: "80%",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    backgroundColor: "#FF1493",
   },
-  largeInput: {
-    width: '1000%', // Ajustez la largeur selon vos besoins
-  },
-
-
 });
