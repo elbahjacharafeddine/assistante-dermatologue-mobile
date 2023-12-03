@@ -3,7 +3,6 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 
 export default function Card(props) {
   const { name, phone, date } = props;
-
   return (
     <View style={styles.card}>
       <Image

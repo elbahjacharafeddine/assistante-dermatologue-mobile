@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "react-native-gesture-handler";
 import { View, Text, Image } from "react-native";
+import axios from 'axios';
 import {
   SimpleLineIcons,
   MaterialIcons,
@@ -11,18 +12,60 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerItemList, createDrawerNavigator } from "@react-navigation/drawer";
 
 import Backups from "./Backups";
-import Categories from "./Categories";
+import Consultations from "./Consultations";
 import Contact from "./Contact";
-import Customize from "./Customize";
+import Profile from "./Profile";
 import GetPremium from "./GetPremium";
 import Home from "./Home";
 import RateApp from "./RateApp";
 import Settings from "./Settings";
 import Timer from "./Timer";
-
+import { API_BASE_URL } from './apiConfig';
 
 
 export default function Drawer() {
+  const [dermatologueDrawer,setDermatologueDrawer]=useState();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const token ="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YXNzaW5lIiwiZXhwIjoxNzAxNDM0NTczLCJhdXRoIjoiUk9MRV9ERVJNQVRPTE9HVUUiLCJpYXQiOjE3MDEzNDgxNzN9.jqKC7Z0X1OdTyL6Oakas7eBSxH5VM8VAzcFkLvtrHN-Mdm5tng_d8gAMuUCRfQCu9hiLj5Jwcvo0A5kt1EjrgQ"
+
+  useEffect(() => {
+    const getDermatologue = async () => {
+      try {
+        const response = await axios.get(API_BASE_URL + '/api/dermatologues/655d346b1ccaf853d2b2b2a4',
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+          }).then((response) => {
+           
+            // const alertMessage = consultationsData.map(consultation => (
+            //   `Nom du patient: ${consultation.rendezVous.patient.user.firstName} ${consultation.rendezVous.patient.user.lastName}\n` +
+            //   `Date de rendez-vous: ${consultation.rendezVous.dateDebut}\n` +
+            //   `Téléphone: ${consultation.rendezVous.patient.telephone}\n` +
+            //   '------------------------------------'
+            // )).join('\n');
+            const dermatologueDrawer = response.data;
+            setDermatologueDrawer(dermatologueDrawer);
+    
+            const { firstName, lastName } = dermatologueDrawer.user;
+            setFirstName(firstName);
+            setLastName(lastName);
+    
+
+            // Affichez les informations dans une alerte
+            // alert(`Prénom: ${firstName}\nNom de famille: ${lastName}`);
+          });
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getDermatologue();
+  }, []);
+
     const Drawer = createDrawerNavigator();
   return (
 
@@ -43,7 +86,8 @@ export default function Drawer() {
                   }}
                 >
                   <Image
-                    // source={User}
+                  source={require('./medecin.png')}
+                   
                     style={{
                       height: 130,
                       width: 130,
@@ -57,13 +101,13 @@ export default function Drawer() {
                       fontWeight: "bold",
                       color: "#111"
                     }}
-                  >Isabella Joanna</Text>
-                  <Text
+                  >  {` ${firstName} ${lastName}`}</Text>
+                  <Text 
                     style={{
                       fontSize: 16,
                       color: "#111"
                     }}
-                  >Product Manager</Text>
+                  >Dermatologue</Text>
                 </View>
                 <DrawerItemList {...props} />
               </SafeAreaView>
@@ -110,26 +154,26 @@ export default function Drawer() {
           component={Timer}
         />
         <Drawer.Screen
-          name="Categories"
+          name="Consultations"
           options={{
-            drawerLabel: "Categories",
-            title: "Categories",
+            drawerLabel: "Consultations",
+            title: "Consultations",
             drawerIcon: () => (
-              <MaterialIcons name="category" size={20} color="#808080" />
+              <MaterialIcons name="people" size={20} color="#808080" />
             )
           }}
-          component={Categories}
+          component={Consultations}
         />
         <Drawer.Screen
-          name="Customize"
+          name="Profile"
           options={{
-            drawerLabel: "Customize",
-            title: "Customize",
+            drawerLabel: "Profile",
+            title: "Profile",
             drawerIcon: () => (
               <MaterialIcons name="dashboard-customize" size={20} color="#808080" />
             )
           }}
-          component={Customize}
+          component={Profile}
         />
         <Drawer.Screen
           name="Settings"

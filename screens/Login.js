@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from "expo-status-bar";
+import { API_BASE_URL } from './apiConfig';
+
 
 
 import {
@@ -24,14 +26,15 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
-  const [showError, setError] = useState(false)
-  const api = 'http://192.168.137.1:8080'
+  const [showError, setError] = useState(false);
+  
+  // const api = 'http://192.168.1.203:8080';
   const dataUser ={
-    "username":"lachgar",
+    "username":"yassine",
     "password":"password"
-  }
+  };
   const handleSignIn = async () => {
-    let response = await axios.post(api+"/api/authenticate",dataUser)
+    let response = await axios.post(API_BASE_URL+"/api/authenticate",dataUser)
         .then(response =>{
           console.log(response.data)
           const token = response.data.id_token;
@@ -77,7 +80,7 @@ export default function Login() {
           <TouchableOpacity>
             <Text style={styles.forgot_button}>Forgot Password?</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.loginBtn}>
+          <TouchableOpacity onPress={handleSignIn}style={styles.loginBtn}>
             <Text style={styles.loginText}>LOGIN</Text>
           </TouchableOpacity>
         </View>

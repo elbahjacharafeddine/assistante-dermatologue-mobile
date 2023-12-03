@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import Drawer from "./screens/Drawer";
 import Login from "./screens/Login";
+import Diagnostique from './screens/Diagnostique'; 
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -21,6 +22,7 @@ export default function App() {
     <Stack.Navigator >
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Drawer" component={Drawer} />
+      <Stack.Screen name="Diagnostique" component={Diagnostique} />
     </Stack.Navigator>
   </NavigationContainer>
   );
