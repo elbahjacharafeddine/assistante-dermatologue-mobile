@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const ConsultationCard = ({ item }) => {
@@ -19,8 +19,14 @@ const ConsultationCard = ({ item }) => {
     return (
         <TouchableOpacity onPress={handleCardPress}>
             <View style={styles.card}>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-                <View style={styles.cardContent}>
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={require('./consultationImage.jpg')}
+                        style={styles.image}
+                    />
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.cardTitle}>{item.title}</Text>
                     <Text style={styles.cardText}>
                         <Text style={styles.label}>Nom :</Text>{' '}
                         <Text style={styles.value}>
@@ -44,31 +50,44 @@ const ConsultationCard = ({ item }) => {
 
 const styles = StyleSheet.create({
     card: {
+        flexDirection: 'row', // Utiliser flexDirection pour disposer les éléments en ligne
         marginBottom: 20,
         padding: 15,
         borderRadius: 15,
-        backgroundColor: '#FDF5E6', // Couleur pêche pour une ambiance douce
+        backgroundColor: '#FDF5E6',
         borderWidth: 1,
-        borderColor: '#FFA07A', // Bordure couleur saumon
+        borderColor: '#FFA07A',
+    },
+    imageContainer: {
+        marginRight: 15,
+    },
+    image: {
+        width: 150,
+        height: 150,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
+        resizeMode: 'cover',
+        borderRadius:10
+    },
+    infoContainer: {
+        flex: 1, // Utiliser flex: 1 pour que les informations occupent tout l'espace restant
+        flexDirection: 'column',
     },
     cardTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
-        color: '#8B4513', // Brun chocolat
-    },
-    cardContent: {
-        flexDirection: 'column',
+        color: '#8B4513',
     },
     cardText: {
         marginBottom: 8,
     },
     label: {
         fontWeight: 'bold',
-        color: '#2E8B57', // Vert mousse
+        color: '#2E8B57',
     },
     value: {
-        color: '#696969', // Gris ardoise
+        color: '#696969',
     },
 });
 

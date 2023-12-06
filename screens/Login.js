@@ -27,7 +27,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
   const [showError, setError] = useState(false);
-  
+  const backgroundImage = require('./background.jpg');
+
   // const api = 'http://192.168.1.203:8080';
   const dataUser ={
     "username":"yassine",
@@ -56,14 +57,14 @@ export default function Login() {
 
 
   return (
-
-        <View style={styles.container}>
-          {/*<Image style={styles.image} source={require("./assets/log2.png")} />*/}
-          <StatusBar style="auto" />
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      
+        <View style={styles.container}>     
+        <Text style={styles.connectText}>Sign in</Text>
           <View style={styles.inputView}>
             <TextInput
                 style={styles.TextInput}
-                placeholder="Email."
+                placeholder="Username"
                 placeholderTextColor="#003f5c"
                 onChangeText={(email) => setEmail(email)}
             />
@@ -71,38 +72,54 @@ export default function Login() {
           <View style={styles.inputView}>
             <TextInput
                 style={styles.TextInput}
-                placeholder="Password."
+                placeholder="Password"
                 placeholderTextColor="#003f5c"
                 secureTextEntry={true}
                 onChangeText={(password) => setPassword(password)}
             />
           </View>
-          <TouchableOpacity>
-            <Text style={styles.forgot_button}>Forgot Password?</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={handleSignIn}style={styles.loginBtn}>
             <Text style={styles.loginText}>LOGIN</Text>
           </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.forgot_button}>Forgot Password?</Text>
+          </TouchableOpacity>
         </View>
+        </ImageBackground >
+
   );
 }
 
 
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    backgroundColor: "#fff",
+  width: '100%', 
+  height: '100%', 
+  resizeMode: 'cover',
+  justifyContent: 'center',
+  },
+   container: {
+    flex: 0,
+    backgroundColor: "#E6E6E6",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 20,
+    // padding: 50, 
+    marginTop: 20, 
+    marginBottom: 20,
+    width: '80%',
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   image: {
     marginBottom: 40,
   },
   inputView: {
-    backgroundColor: "#FFC0CB",
-    borderRadius: 30,
-    width: "70%",
+    backgroundColor: "#FFF",
+    // borderRadius: 30,
+    width: "80%",
     height: 45,
     marginBottom: 20,
     alignItems: "center",
@@ -123,7 +140,12 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "#FF1493",
+    // marginTop: 40,
+    backgroundColor: "#0B5ED7",
+  },
+  connectText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20, // Espace en bas du texte "Se Connecter"
   },
 });
