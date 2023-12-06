@@ -13,8 +13,10 @@ const Consultations = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredConsultations, setFilteredConsultations] = useState([]);
   const [consultations, setConsultations] = useState([]);
+
   const [token, setToken] = useState("")
   const isFocused = useIsFocused();
+
 
   const getToken = async () => {
     try {
