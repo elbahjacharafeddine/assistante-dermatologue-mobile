@@ -60,7 +60,7 @@ export default function Login() {
           if (object.auth ==="ROLE_DERMATOLOGUE"){
               asyncStorage.setItem("token",token)
 
-            navigation.navigate("Drawer");
+            navigation.navigate("Dermatologist assistant");
           }
           else {
             alert("this application is dedicated to doctors")

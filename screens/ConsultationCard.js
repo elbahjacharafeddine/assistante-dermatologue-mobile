@@ -5,6 +5,22 @@ import { useNavigation } from '@react-navigation/native';
 const ConsultationCard = ({ item }) => {
     const navigation = useNavigation();
 
+
+    const  getDate = (date) =>{
+        const dateObject = new Date(date);
+        const year = dateObject.getFullYear();
+        const month = dateObject.getMonth() + 1;
+        const day = dateObject.getDate();
+        return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+    }
+    const getHour = (date) =>{
+        const dateObject = new Date(date);
+        const hours = dateObject.getUTCHours();
+        const minutes = dateObject.getUTCMinutes();
+        const seconds = dateObject.getUTCSeconds();
+
+        return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+    }
     const handleCardPress = () => {
         const dermatologueId = item.rendezVous.patient.user.id;
         const patientId = item.rendezVous.id;
@@ -30,19 +46,23 @@ const ConsultationCard = ({ item }) => {
                 <View style={styles.infoContainer}>
                     <Text style={styles.cardTitle}>{item.title}</Text>
                     <Text style={styles.cardText}>
-                        <Text style={styles.label}>Nom :</Text>{' '}
+                        <Text style={styles.label}>Name :</Text>{' '}
                         <Text style={styles.value}>
                             {item.rendezVous.patient.user.firstName}{' '}
                             {item.rendezVous.patient.user.lastName}
                         </Text>
                     </Text>
                     <Text style={styles.cardText}>
-                        <Text style={styles.label}>Téléphone :</Text>{' '}
+                        <Text style={styles.label}>Phone :</Text>{' '}
                         <Text style={styles.value}>{item.rendezVous.patient.telephone}</Text>
                     </Text>
                     <Text style={styles.cardText}>
-                        <Text style={styles.label}>Date de consultations :</Text>{' '}
-                        <Text style={styles.value}>{item.rendezVous.dateDebut}</Text>
+                        <Text style={styles.label}>Date :</Text>{' '}
+                        <Text style={styles.value}>{getDate(item.rendezVous.dateDebut)}</Text>
+                    </Text>
+                    <Text style={styles.cardText}>
+                        <Text style={styles.label}>Hour :</Text>{' '}
+                        <Text style={styles.value}>{getHour(item.rendezVous.dateDebut)}</Text>
                     </Text>
                 </View>
             </View>

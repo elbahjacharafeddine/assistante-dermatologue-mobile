@@ -21,7 +21,7 @@ export default function App() {
    
     <Stack.Navigator >
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Drawer" component={Drawer} />
+      <Stack.Screen name="Dermatologist assistant" component={Drawer} />
       <Stack.Screen name="Diagnostic" component={Diagnostic} />
       <Stack.Screen name="new Diagnostic" component={NewDiagnostic} />
     </Stack.Navigator>
