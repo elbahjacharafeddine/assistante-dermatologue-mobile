@@ -8,12 +8,14 @@ const ConsultationCard = ({ item }) => {
     const handleCardPress = () => {
         const dermatologueId = item.rendezVous.patient.user.id;
         const patientId = item.rendezVous.id;
+        const consultationId = item.id
 
-        Alert.alert(
-            'Détails de la consultation',
-            `ID du patient: ${patientId}\nID du dermatologue: ${dermatologueId}`
-        );
-        navigation.navigate('Diagnostique', { dermatologueId, patientId });
+        // Alert.alert(
+        //     'Détails de la consultation',
+        //     `ID du patient: ${patientId}\nID du consulations: ${consultationId}`
+        //
+        // );
+        navigation.navigate('Diagnostic', { dermatologueId, consultationId });
     };
 
     return (
@@ -47,15 +49,15 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         padding: 15,
         borderRadius: 15,
-        backgroundColor: '#FDF5E6', // Couleur pêche pour une ambiance douce
+        backgroundColor: '#FDF5E6',
         borderWidth: 1,
-        borderColor: '#FFA07A', // Bordure couleur saumon
+        borderColor: '#FFA07A',
     },
     cardTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#8B4513', // Brun chocolat
+        // marginBottom: 10,
+        color: '#8B4513',
     },
     cardContent: {
         flexDirection: 'column',
@@ -65,10 +67,10 @@ const styles = StyleSheet.create({
     },
     label: {
         fontWeight: 'bold',
-        color: '#2E8B57', // Vert mousse
+        color: '#2E8B57',
     },
     value: {
-        color: '#696969', // Gris ardoise
+        color: '#696969',
     },
 });
 

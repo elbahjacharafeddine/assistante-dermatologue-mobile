@@ -20,26 +20,41 @@ import {jwtDecode} from 'jwt-decode';
 import { decode as base64Decode } from 'base-64';
 
 import jwt_decode from "jwt-decode";
+import asyncStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const [email, setEmail] = useState("");
   const navigation = useNavigation();
   const [showError, setError] = useState(false);
-  
-  // const api = 'http://192.168.1.203:8080';
+
+
+    const saveToken = async (token) =>{
+        try {
+            await asyncStorage.setItem("token",token);
+            console.log('Token sauvegardé avec succès.');
+        }catch (error){
+            console.log(error)
+            alert("Erreur lors de la sauvegarde du token")
+        }
+    }
+
+
+
   const dataUser ={
-    "username":"yassine",
-    "password":"password"
+    "username":username,
+    "password":password
   };
   const handleSignIn = async () => {
     let response = await axios.post(API_BASE_URL+"/api/authenticate",dataUser)
         .then(response =>{
           console.log(response.data)
           const token = response.data.id_token;
+          saveToken(token)
           const object = JSON.parse(atob(token.split('.')[1]))
           if (object.auth ==="ROLE_DERMATOLOGUE"){
+              asyncStorage.setItem("token",token)
+
             navigation.navigate("Drawer");
           }
           else {
@@ -55,6 +70,8 @@ export default function Login() {
   };
 
 
+
+
   return (
 
         <View style={styles.container}>
@@ -63,15 +80,15 @@ export default function Login() {
           <View style={styles.inputView}>
             <TextInput
                 style={styles.TextInput}
-                placeholder="Email."
+                placeholder="username"
                 placeholderTextColor="#003f5c"
-                onChangeText={(email) => setEmail(email)}
+                onChangeText={(email) => setUsername(email)}
             />
           </View>
           <View style={styles.inputView}>
             <TextInput
                 style={styles.TextInput}
-                placeholder="Password."
+                placeholder="password"
                 placeholderTextColor="#003f5c"
                 secureTextEntry={true}
                 onChangeText={(password) => setPassword(password)}

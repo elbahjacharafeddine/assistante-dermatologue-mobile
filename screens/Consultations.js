@@ -4,47 +4,44 @@ import { View, Text, TextInput, FlatList, StyleSheet } from 'react-native';
 import ConsultationCard from './ConsultationCard';
 import { API_BASE_URL } from './apiConfig';
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import {useIsFocused} from "@react-navigation/native";
+import asyncStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
 
 const Consultations = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredConsultations, setFilteredConsultations] = useState([]);
   const [consultations, setConsultations] = useState([]);
-  const token ="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YXNzaW5lIiwiZXhwIjoxNzAxNDM0NTczLCJhdXRoIjoiUk9MRV9ERVJNQVRPTE9HVUUiLCJpYXQiOjE3MDEzNDgxNzN9.jqKC7Z0X1OdTyL6Oakas7eBSxH5VM8VAzcFkLvtrHN-Mdm5tng_d8gAMuUCRfQCu9hiLj5Jwcvo0A5kt1EjrgQ"
+  const [token, setToken] = useState("")
+  const isFocused = useIsFocused();
 
-
-  // const api = 'http://192.168.1.11:8080'
-
-  useEffect(() => {
-    const getConsultations = async () => {
-      try {
-        const response = await axios.get(API_BASE_URL + '/api/consultations/listeConsultations/dematologue/655cd48a2f775e6a927c0b22',
+  const getToken = async () => {
+    try {
+      const t = await AsyncStorage.getItem("token");
+      const response = await axios.get(
+          API_BASE_URL + '/api/consultations/listeConsultations/dematologue/6547cb2707c44a7f9323eaff',
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${t}`
             },
-          }).then((response) => {
-            const consultationsData = response.data;
-            setConsultations(consultationsData);
-            // const alertMessage = consultationsData.map(consultation => (
-            //   `Nom du patient: ${consultation.rendezVous.patient.user.firstName} ${consultation.rendezVous.patient.user.lastName}\n` +
-            //   `Date de rendez-vous: ${consultation.rendezVous.dateDebut}\n` +
-            //   `Téléphone: ${consultation.rendezVous.patient.telephone}\n` +
-            //   '------------------------------------'
-            // )).join('\n');
+          }
+      );
 
-            // alert(alertMessage);
-          });
-
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getConsultations();
-  }, []);
+      setConsultations(response.data);
+    } catch (error) {
+      console.log(error);
+      console.log("error dans la partie consultation")
+    }
+  }
 
 
+  useEffect( () => {
+    if (isFocused) {
+      getToken()
+  }}, [isFocused]);
+//
   const searchFilter = (text) => {
     setSearchQuery(text);
     const query = text.toLowerCase();
@@ -102,6 +99,7 @@ const styles = StyleSheet.create({
     borderColor: '#A9A9A9',
     marginBottom: 10,
     paddingHorizontal: 10,
+    marginTop:-50,
   },
 });
 

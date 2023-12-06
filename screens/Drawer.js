@@ -21,18 +21,28 @@ import RateApp from "./RateApp";
 import Settings from "./Settings";
 import Timer from "./Timer";
 import { API_BASE_URL } from './apiConfig';
+import asyncStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function Drawer() {
   const [dermatologueDrawer,setDermatologueDrawer]=useState();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const token ="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YXNzaW5lIiwiZXhwIjoxNzAxNDM0NTczLCJhdXRoIjoiUk9MRV9ERVJNQVRPTE9HVUUiLCJpYXQiOjE3MDEzNDgxNzN9.jqKC7Z0X1OdTyL6Oakas7eBSxH5VM8VAzcFkLvtrHN-Mdm5tng_d8gAMuUCRfQCu9hiLj5Jwcvo0A5kt1EjrgQ"
+  const [token, setToken] = useState("")
+  const getToken = async ()=>{
+        const token = await AsyncStorage.getItem('token');
+        setToken(token)
+  }
+
+
 
   useEffect(() => {
     const getDermatologue = async () => {
       try {
+          await getToken()
         const response = await axios.get(API_BASE_URL + '/api/dermatologues/655d346b1ccaf853d2b2b2a4',
+
           {
             headers: {
               "Content-Type": "application/json",
@@ -60,6 +70,7 @@ export default function Drawer() {
 
       } catch (error) {
         console.error(error);
+          console.log("error ici ")
       }
     };
 
