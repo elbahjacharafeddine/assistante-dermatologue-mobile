@@ -56,17 +56,20 @@ const DiagnosticCard = ({ item }) => {
                             <View style={styles.hr}></View>
 
                             <ScrollView>
-                                <View style={styles.carddContainer}>
-                                {
-                                    probabilities.map((e,index) =>(
-                                        <View>
-                                            <Text style={styles.cardTitle}>{maladies[index]} ... {probabilities[index]}</Text>
+                                <View style={styles.card}>
+                                    <Text style={styles.titre}>Statistics</Text>
+                                    <View style={styles.hr}></View>
+
+                                    {probabilities.map((e, index) => (
+                                        <View key={index} style={styles.probabilityContainer}>
+                                            <View style={{flexDirection:"row", justifyContent: 'space-between',}}>
+                                                <Text style={styles.probabilityTitle}>{maladies[index]}</Text>
+                                                <Text style={styles.probabilityValue}>{e}</Text>
+                                            </View>
                                             <View style={styles.hr}></View>
                                         </View>
-                                    ))
-                                }
-
-                            </View>
+                                    ))}
+                                </View>
 
                                 <View style={styles.container}>
                                     <View style={styles.card}>
@@ -81,7 +84,10 @@ const DiagnosticCard = ({ item }) => {
 
                                     <View style={styles.card}>
                                         <Text style={styles.titre}>Degree of Certainty</Text>
-                                        <Text style={styles.paragraphe}>{maladiePretected} ==> {getIndexByValue(maladiePretected)}</Text>
+                                        <View style={{flexDirection:"row", justifyContent: 'space-between',}}>
+                                            <Text style={styles.probabilityTitle}>{maladiePretected}</Text>
+                                            <Text style={styles.probabilityValue}>{getIndexByValue(maladiePretected)}</Text>
+                                        </View>
                                     </View>
 
                                     <View style={styles.card}>
@@ -141,7 +147,7 @@ const DiagnosticCard = ({ item }) => {
                     </Text>
 
                     <Text style={styles.cardText}>
-                        <Text style={styles.value}>Date :</Text>{' '}
+                        <Text style={styles.value}>Hour :</Text>{' '}
                         <Text style={styles.label}>{getHour(item.dateDiagnostic)}</Text>
                     </Text>
                 </View>
@@ -152,14 +158,14 @@ const DiagnosticCard = ({ item }) => {
 };
 
 const styles = StyleSheet.create({
-    cardContainer: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10,
-        flexDirection: 'row',
-    },
+    // cardContainer: {
+    //     borderWidth: 1,
+    //     borderColor: '#ddd',
+    //     borderRadius: 5,
+    //     padding: 10,
+    //     marginBottom: 10,
+    //     flexDirection: 'row',
+    // },
     textContainer: {
         marginTop:10,
         flex: 1,
@@ -219,13 +225,13 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center"
     },
-    cardTitle: {
-        textAlign:'center',
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 8,
-
-    },
+    // cardTitle: {
+    //     textAlign:'center',
+    //     fontSize: 20,
+    //     fontWeight: 'bold',
+    //     marginBottom: 8,
+    //
+    // },
     titleCard:{
         fontSize:14,
         fontWeight: 'bold',
@@ -247,11 +253,11 @@ const styles = StyleSheet.create({
         fontSize: 40,
     },
 
-    hr: {
-        borderBottomColor: 'black',
-        borderBottomWidth: 1,
-        marginVertical: 10,
-    },
+    // hr: {
+    //     borderBottomColor: 'black',
+    //     borderBottomWidth: 1,
+    //     marginVertical: 10,
+    // },
 
     imageeContainer: {
         flexDirection: 'row',
@@ -302,11 +308,48 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        width: 200,
+        width: 300,
         height: 200,
         resizeMode: 'cover',
         borderRadius: 8,
         marginTop: 8,
+    },
+
+
+    cardContainer: {
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 16,
+        margin: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 4,
+    },
+    cardTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    hr: {
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        marginVertical: 8,
+    },
+    probabilityContainer: {
+        marginBottom: 8,
+    },
+    probabilityTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    probabilityValue: {
+        fontSize: 16,
+        color: '#555',
     },
 
 
