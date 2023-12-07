@@ -142,28 +142,28 @@ export default function Drawer() {
           }
         }}
       >
-        <Drawer.Screen
-          name="Home"
-          options={{
-            drawerLabel: "Home",
-            title: "Home",
-            drawerIcon: () => (
-              <SimpleLineIcons name="home" size={20} color="#808080" />
-            )
-          }}
-          component={Home}
-        />
-        <Drawer.Screen
-          name="Timer"
-          options={{
-            drawerLabel: "Timer",
-            title: "Timer",
-            drawerIcon: () => (
-              <MaterialIcons name="timer" size={20} color="#808080" />
-            )
-          }}
-          component={Timer}
-        />
+        {/*<Drawer.Screen*/}
+        {/*  name="Home"*/}
+        {/*  options={{*/}
+        {/*    drawerLabel: "Home",*/}
+        {/*    title: "Home",*/}
+        {/*    drawerIcon: () => (*/}
+        {/*      <SimpleLineIcons name="home" size={20} color="#808080" />*/}
+        {/*    )*/}
+        {/*  }}*/}
+        {/*  component={Home}*/}
+        {/*/>*/}
+        {/*<Drawer.Screen*/}
+        {/*  name="Timer"*/}
+        {/*  options={{*/}
+        {/*    drawerLabel: "Timer",*/}
+        {/*    title: "Timer",*/}
+        {/*    drawerIcon: () => (*/}
+        {/*      <MaterialIcons name="timer" size={20} color="#808080" />*/}
+        {/*    )*/}
+        {/*  }}*/}
+        {/*  component={Timer}*/}
+        {/*/>*/}
         <Drawer.Screen
           name="Consultations"
           options={{

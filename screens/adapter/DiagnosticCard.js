@@ -2,28 +2,30 @@
 
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-
+import { Root, Popup } from 'popup-ui'
 const DiagnosticCard = ({ item }) => {
 
     const  getDate = (date) =>{
         const dateObject = new Date(date);
+        dateObject.setHours(dateObject.getHours()+1)
         const year = dateObject.getFullYear();
         const month = dateObject.getMonth() + 1;
+
         const day = dateObject.getDate();
         return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
     }
     const getHour = (date) =>{
         const dateObject = new Date(date);
-        const hours = dateObject.getUTCHours()+1;
-        const minutes = dateObject.getUTCMinutes();
-        const seconds = dateObject.getUTCSeconds();
-
+        dateObject.setHours(dateObject.getHours()+1)
+        const hours = dateObject.getHours();
+        const minutes = dateObject.getMinutes();
+        const seconds = dateObject.getSeconds();
         return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
     }
 
     const handleClickItem = () =>{
         // alert("item clicked ...")
-        alert(item.dateDiagnostic)
+        // alert(item.dateDiagnostic)
     }
 
     return (
@@ -36,11 +38,25 @@ const DiagnosticCard = ({ item }) => {
                     />
                 </View>
                 <View style={styles.textContainer}>
-                    {/*<Text style={styles.title}>{item.id}</Text>*/}
-                    <Text style={styles.title}>Disease : {item.maladies[0].abbr}</Text>
-                    <Text style={styles.title}>Probabilty : {item.probability}</Text>
-                    <Text>Date :<Text style={styles.title}>{getDate(item.dateDiagnostic)}</Text></Text>
-                    <Text>Hour :{getHour(item.dateDiagnostic)}</Text>
+                    <Text style={styles.cardText}>
+                        <Text style={styles.value}>Disease :</Text>{' '}
+                        <Text style={styles.label}>{item.maladies[0].abbr}</Text>
+                    </Text>
+
+                    <Text style={styles.cardText}>
+                        <Text style={styles.value}>Probabilty :</Text>{' '}
+                        <Text style={styles.label}>{item.probability}</Text>
+                    </Text>
+
+                    <Text style={styles.cardText}>
+                        <Text style={styles.value}>Date :</Text>{' '}
+                        <Text style={styles.label}>{getDate(item.dateDiagnostic)}</Text>
+                    </Text>
+
+                    <Text style={styles.cardText}>
+                        <Text style={styles.value}>Date :</Text>{' '}
+                        <Text style={styles.label}>{getHour(item.dateDiagnostic)}</Text>
+                    </Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -65,11 +81,17 @@ const styles = StyleSheet.create({
         borderRadius: 25,
     },
     textContainer: {
+        marginTop:10,
         flex: 1,
     },
     title: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    label: {
+        fontWeight: 'bold',
+        // color: ''
+        fontSize: 18,
     },
 });
 
