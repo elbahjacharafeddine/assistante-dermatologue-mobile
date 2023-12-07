@@ -68,6 +68,7 @@ export default function Login() {
 
         })
         .catch(error =>{
+            console.log("Error in login ")
           console.log(error)
           setError(true)
         })
