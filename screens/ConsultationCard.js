@@ -36,34 +36,54 @@ const ConsultationCard = ({ item }) => {
 
     return (
         <TouchableOpacity onPress={handleCardPress}>
-            <View style={styles.card}>
+            <View style={styles.cardContainer}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={require('./consultationImage.jpg')}
                         style={styles.image}
+                        source={require('../assets/images/logo.png')}
                     />
                 </View>
-                <View style={styles.infoContainer}>
-                    <Text style={styles.cardTitle}>{item.title}</Text>
-                    <Text style={styles.cardText}>
-                        <Text style={styles.label}>Name :</Text>{' '}
-                        <Text style={styles.value}>
-                            {item.rendezVous.patient.user.firstName}{' '}
-                            {item.rendezVous.patient.user.lastName}
-                        </Text>
-                    </Text>
-                    <Text style={styles.cardText}>
-                        <Text style={styles.label}>Phone :</Text>{' '}
+                <View style={{
+                    flexDirection:"column"
+                }}>
+
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Patient</Text>
+                        <Text style={styles.value}> {item.rendezVous.patient.user.firstName}{' '}
+                            {item.rendezVous.patient.user.lastName}</Text>
+                    </View>
+                    <View style={styles.hr}></View>
+
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Phone</Text>
                         <Text style={styles.value}>{item.rendezVous.patient.telephone}</Text>
-                    </Text>
-                    <Text style={styles.cardText}>
-                        <Text style={styles.label}>Date :</Text>{' '}
+                    </View>
+
+                    <View style={styles.hr}></View>
+
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Date</Text>
                         <Text style={styles.value}>{getDate(item.rendezVous.dateDebut)}</Text>
-                    </Text>
-                    <Text style={styles.cardText}>
-                        <Text style={styles.label}>Hour :</Text>{' '}
+                    </View>
+
+                    <View style={styles.hr}></View>
+
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Hour</Text>
                         <Text style={styles.value}>{getHour(item.rendezVous.dateDebut)}</Text>
-                    </Text>
+                    </View>
                 </View>
             </View>
         </TouchableOpacity>
@@ -71,45 +91,47 @@ const ConsultationCard = ({ item }) => {
 };
 
 const styles = StyleSheet.create({
-    card: {
-        flexDirection: 'row', // Utiliser flexDirection pour disposer les éléments en ligne
-        marginBottom: 20,
-        padding: 15,
-        borderRadius: 15,
-        backgroundColor: '#FDF5E6',
-        borderWidth: 1,
-        borderColor: '#FFA07A',
-    },
+
     imageContainer: {
+        justifyContent:'center',
+        display:'flex',
+        alignItems:'center',
         marginRight: 15,
     },
     image: {
         width: 150,
         height: 150,
-        borderTopLeftRadius: 10,
-        borderBottomLeftRadius: 10,
         resizeMode: 'cover',
-        borderRadius:10
+        borderRadius:50
     },
-    infoContainer: {
-        flex: 1, // Utiliser flex: 1 pour que les informations occupent tout l'espace restant
+
+    cardContainer: {
         flexDirection: 'column',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 16,
+        margin: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 4,
     },
-    cardTitle: {
-        fontSize: 20,
+
+    hr: {
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
+        marginVertical: 8,
+    },
+    label:{
+        fontSize: 16,
+        // fontWeight: 'bold',
+        marginBottom: 1,
+    },
+    value:{
+        fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#8B4513',
-    },
-    cardText: {
-        marginBottom: 8,
-    },
-    label: {
-        fontWeight: 'bold',
-        color: '#2E8B57',
-    },
-    value: {
-        color: '#696969',
+        marginBottom: 1,
     },
 });
 

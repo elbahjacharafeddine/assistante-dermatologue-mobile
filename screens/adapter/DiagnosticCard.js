@@ -101,8 +101,8 @@ const DiagnosticCard = ({ item }) => {
 
                                     <View style={styles.card}>
                                         <Text style={styles.titre}>Requirements</Text>
-                                        <Text style={styles.paragraphe}>* {description}</Text>
-                                        <Text style={styles.paragraphe}>* {prescription}</Text>
+                                        <Text style={styles.paragraphe}>{description ? "*":''} {description}</Text>
+                                        <Text style={styles.paragraphe}>{prescription ? "*":''} {prescription}</Text>
                                     </View>
                                 </View>
 
@@ -130,26 +130,46 @@ const DiagnosticCard = ({ item }) => {
                         source={{ uri: `data:image/png;base64,${item.picture}` }}
                     />
                 </View>
-                <View style={styles.textContainer}>
-                    <Text style={styles.cardText}>
-                        <Text style={styles.value}>Disease :</Text>{' '}
-                        <Text style={styles.label}>{item.maladies[0].abbr}</Text>
-                    </Text>
 
-                    <Text style={styles.cardText}>
-                        <Text style={styles.value}>Probabilty :</Text>{' '}
-                        <Text style={styles.label}>{item.probability}</Text>
-                    </Text>
+                <View style={{
+                    flexDirection:"column"
+                }}>
 
-                    <Text style={styles.cardText}>
-                        <Text style={styles.value}>Date :</Text>{' '}
-                        <Text style={styles.label}>{getDate(item.dateDiagnostic)}</Text>
-                    </Text>
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Disease</Text>
+                        <Text style={styles.value}> {item.maladies[0].abbr}</Text>
+                    </View>
+                    <View style={styles.hr}></View>
 
-                    <Text style={styles.cardText}>
-                        <Text style={styles.value}>Hour :</Text>{' '}
-                        <Text style={styles.label}>{getHour(item.dateDiagnostic)}</Text>
-                    </Text>
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Probabilty</Text>
+                        <Text style={styles.value}> {item.probability}</Text>
+                    </View>
+                    <View style={styles.hr}></View>
+
+
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Date</Text>
+                        <Text style={styles.value}> {getDate(item.dateDiagnostic)}</Text>
+                    </View>
+                    <View style={styles.hr}></View>
+
+                    <View style={{
+                        flexDirection:"row",
+                        justifyContent:'space-between'
+                    }}>
+                        <Text style={styles.label}>Hour</Text>
+                        <Text style={styles.value}> {getHour(item.dateDiagnostic)}</Text>
+                    </View>
                 </View>
             </View>
             {renderModal()}
@@ -174,11 +194,11 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    label: {
-        fontWeight: 'bold',
-        // color: ''
-        fontSize: 18,
-    },
+    // label: {
+    //     fontWeight: 'bold',
+    //     // color: ''
+    //     fontSize: 18,
+    // },
 
     modalView:{
         flex:1,
@@ -313,6 +333,44 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         borderRadius: 8,
         marginTop: 8,
+        marginBottom:12
+    },
+
+
+    // cardContainer: {
+    //     flexDirection: 'column',
+    //     backgroundColor: '#fff',
+    //     borderRadius: 8,
+    //     padding: 16,
+    //     margin: 16,
+    //     shadowColor: '#000',
+    //     shadowOffset: { width: 0, height: 2 },
+    //     shadowOpacity: 0.2,
+    //     shadowRadius: 4,
+    //     elevation: 4,
+    // },
+    cardTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    // hr: {
+    //     borderBottomColor: '#ccc',
+    //     borderBottomWidth: 1,
+    //     marginVertical: 8,
+    // },
+    probabilityContainer: {
+        marginBottom: 8,
+    },
+    probabilityTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    probabilityValue: {
+        fontSize: 16,
+        color: '#555',
     },
 
 
@@ -328,28 +386,21 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 4,
     },
-    cardTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
+
     hr: {
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
         marginVertical: 8,
     },
-    probabilityContainer: {
-        marginBottom: 8,
+    label:{
+        fontSize: 16,
+        // fontWeight: 'bold',
+        marginBottom: 1,
     },
-    probabilityTitle: {
+    value:{
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    probabilityValue: {
-        fontSize: 16,
-        color: '#555',
+        marginBottom: 1,
     },
 
 
