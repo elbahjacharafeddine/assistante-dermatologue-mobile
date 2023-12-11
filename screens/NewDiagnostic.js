@@ -1,242 +1,153 @@
-import React, { Component } from 'react';
-import {
-    ActivityIndicator,
-    Button,
-    Clipboard,
-    Image,
-    Share,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
-import { Constants, ImagePicker, Permissions } from 'expo';
+import React, { useEffect, useState } from 'react';
+import { Button, Image, Platform, View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { CheckBox } from 'react-native-elements';
+import axios from 'axios';
+import { API_BASE_MODEL } from './apiConfig';
 
-export default class NewDiagnostic extends Component {
-    state = {
-        image: null,
-        uploading: false,
-    };
+export default function NewDiagnostic() {
+  const [image, setImage] = useState(null);
+  const [selectedSymptom, setSelectedSymptom] = useState("Symptom 1");
+  const symptoms = ['Rougeur', 'Démangeaisons', 'Irritation', 'Sécheresse', 'Eruption cutanée', 'Desquamation', 'Taches sombres'];
+  const [checkBoxValues, setCheckBoxValues] = useState({
+    Rougeur: false,
+    Démangeaisons: false,
+    Irritation: false,
+    Sécheresse: false,
+    "Eruption cutanée": false,
+    "Desquamation": false,
+    "Taches sombres": false,
+  });
 
-    render() {
-        let {
-            image
-        } = this.state;
+  const handleCheckBoxChange = (symptom) => {
+    setCheckBoxValues((prevValues) => ({
+      ...prevValues,
+      [symptom]: !prevValues[symptom],
+    }));
+  };
 
-        return (
-            <View style={styles.container}>
-                <StatusBar barStyle="default" />
+  const displaySelectedSymptoms = async () => {
+    const selectedSymptoms = symptoms.filter((symptom) => checkBoxValues[symptom]);
+    console.log('Selected Symptoms:', selectedSymptoms);
 
-                <Text
-                    style={styles.exampleText}>
-                    Example: Upload ImagePicker result
-                </Text>
+    const apiUrl = API_BASE_MODEL + '/disease/predict';
 
-                <Button
-                    onPress={this._pickImage}
-                    title="Pick an image from camera roll"
-                />
-
-                <Button onPress={this._takePhoto} title="Take a photo" />
-
-                {this._maybeRenderImage()}
-                {this._maybeRenderUploadingOverlay()}
-            </View>
-        );
-    }
-
-    _maybeRenderUploadingOverlay = () => {
-        if (this.state.uploading) {
-            return (
-                <View
-                    style={[StyleSheet.absoluteFill, styles.maybeRenderUploading]}>
-                    <ActivityIndicator color="#fff" size="large" />
-                </View>
-            );
-        }
-    };
-
-    _maybeRenderImage = () => {
-        let {
-            image
-        } = this.state;
-
-        if (!image) {
-            return;
-        }
-
-        return (
-            <View
-                style={styles.maybeRenderContainer}>
-                <View
-                    style={styles.maybeRenderImageContainer}>
-                    <Image source={{ uri: image }} style={styles.maybeRenderImage} />
-                </View>
-
-                <Text
-                    onPress={this._copyToClipboard}
-                    onLongPress={this._share}
-                    style={styles.maybeRenderImageText}>
-                    {image}
-                </Text>
-            </View>
-        );
-    };
-
-    _share = () => {
-        Share.share({
-            message: this.state.image,
-            title: 'Check out this photo',
-            url: this.state.image,
-        });
-    };
-
-    _copyToClipboard = () => {
-        Clipboard.setString(this.state.image);
-        alert('Copied image URL to clipboard');
-    };
-
-    _takePhoto = async () => {
-        const {
-            status: cameraPerm
-        } = await Permissions.askAsync(Permissions.CAMERA);
-
-        const {
-            status: cameraRollPerm
-        } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
-        // only if user allows permission to camera AND camera roll
-        if (cameraPerm === 'granted' && cameraRollPerm === 'granted') {
-            let pickerResult = await ImagePicker.launchCameraAsync({
-                allowsEditing: true,
-                aspect: [4, 3],
-            });
-
-            this._handleImagePicked(pickerResult);
-        }
-    };
-
-    _pickImage = async () => {
-        const {
-            status: cameraRollPerm
-        } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
-        // only if user allows permission to camera roll
-        if (cameraRollPerm === 'granted') {
-            let pickerResult = await ImagePicker.launchImageLibraryAsync({
-                allowsEditing: true,
-                aspect: [4, 3],
-            });
-
-            this._handleImagePicked(pickerResult);
-        }
-    };
-
-    _handleImagePicked = async pickerResult => {
-        let uploadResponse, uploadResult;
-
-        try {
-            this.setState({
-                uploading: true
-            });
-
-            if (!pickerResult.cancelled) {
-                uploadResponse = await uploadImageAsync(pickerResult.uri);
-                uploadResult = await uploadResponse.json();
-
-                this.setState({
-                    image: uploadResult.location
-                });
-            }
-        } catch (e) {
-            console.log({ uploadResponse });
-            console.log({ uploadResult });
-            console.log({ e });
-            alert('Upload failed, sorry :(');
-        } finally {
-            this.setState({
-                uploading: false
-            });
-        }
-    };
-}
-
-async function uploadImageAsync(uri) {
-    let apiUrl = 'https://file-upload-example-backend-dkhqoilqqn.now.sh/upload';
-
-    // Note:
-    // Uncomment this if you want to experiment with local server
-    //
-    // if (Constants.isDevice) {
-    //   apiUrl = `https://your-ngrok-subdomain.ngrok.io/upload`;
-    // } else {
-    //   apiUrl = `http://localhost:3000/upload`
-    // }
-
-    let uriParts = uri.split('.');
-    let fileType = uriParts[uriParts.length - 1];
-
-    let formData = new FormData();
-    formData.append('photo', {
-        uri,
-        name: `photo.${fileType}`,
-        type: `image/${fileType}`,
+    const formData = new FormData();
+    formData.append('image', {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'image.jpg',
     });
 
-    let options = {
-        method: 'POST',
-        body: formData,
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-        },
-    };
+    // try {
+    //   const response = await axios.post(apiUrl, formData, {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
+    //     },
+    //   });
 
-    return fetch(apiUrl, options);
+      await axios.post(apiUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(response =>{
+        console.log(response.data);
+      }).catch(error =>{
+        console.log(error);
+      })
+
+      console.log("Hi ELBAHJA ......");
+      console.log('Prediction result:', response.data);
+    // } catch (error) {
+    //   console.error('Error predicting disease:', error.message);
+    // }
+  };
+
+  useEffect(async () => {
+    if (Platform.OS !== 'web') {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permission denied !!');
+      }
+    }
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity onPress={pickImage}>
+        <View style={styles.card}>
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
+              source={{ uri: image }}
+            />
+            {image == null ? <Text>Tap here to upload your image</Text> : <Text></Text>}
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.checkboxContainer}>
+          {symptoms.map((symptom, index) => (
+            <CheckBox
+              key={index}
+              title={symptom}
+              checked={checkBoxValues[symptom]}
+              onPress={() => handleCheckBoxChange(symptom)}
+            />
+          ))}
+        </View>
+      </ScrollView>
+
+      <Button title="Confirm" onPress={displaySelectedSymptoms} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        alignItems: 'center',
-        flex: 1,
-        justifyContent: 'center',
-    },
-    exampleText: {
-        fontSize: 20,
-        marginBottom: 20,
-        marginHorizontal: 15,
-        textAlign: 'center',
-    },
-    maybeRenderUploading: {
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        justifyContent: 'center',
-    },
-    maybeRenderContainer: {
-        borderRadius: 3,
-        elevation: 2,
-        marginTop: 30,
-        shadowColor: 'rgba(0,0,0,1)',
-        shadowOpacity: 0.2,
-        shadowOffset: {
-            height: 4,
-            width: 4,
-        },
-        shadowRadius: 5,
-        width: 250,
-    },
-    maybeRenderImageContainer: {
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
-        overflow: 'hidden',
-    },
-    maybeRenderImage: {
-        height: 250,
-        width: 250,
-    },
-    maybeRenderImageText: {
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-    }
+  container: {
+    flex: 1,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    margin: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  image: {
+    width: 300,
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 8,
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  imageContainer: {
+    alignItems: 'center',
+  },
+  scrollView: {
+    marginTop: 10,
+    flex: 1,
+  },
+  checkboxContainer: {
+    marginTop: 20,
+  },
 });

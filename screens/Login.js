@@ -44,7 +44,6 @@ export default function Login() {
 
   const backgroundImage = require('./background.jpg');
 
-  // const api = 'http://192.168.1.203:8080';
 
   const dataUser ={
     "username":username,
@@ -59,7 +58,7 @@ export default function Login() {
           const object = JSON.parse(atob(token.split('.')[1]))
           if (object.auth ==="ROLE_DERMATOLOGUE"){
               asyncStorage.setItem("token",token)
-
+              asyncStorage.setItem("username",dataUser.username);
             navigation.navigate("Dermatologist assistant");
           }
           else {
