@@ -31,7 +31,8 @@ const ConsultationCard = ({ item }) => {
         //     `ID du patient: ${patientId}\nID du consulations: ${consultationId}`
         //
         // );
-        navigation.navigate('Diagnostic', { dermatologueId, consultationId });
+        
+        navigation.navigate('Diagnostic', {consultationId });
     };
 
     return (

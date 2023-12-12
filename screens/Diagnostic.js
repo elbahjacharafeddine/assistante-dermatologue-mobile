@@ -9,7 +9,7 @@ import { API_BASE_URL } from './apiConfig';
 
 const Diagnostic = ({ route }) => {
     const [isModalVisible, setModalVisible] = useState(false);
-    const { dermatologueId, consultationId } = route.params;
+    const {consultationId } = route.params;
     const [token, setToken] = useState("")
     const isfocused = useIsFocused();
 
@@ -44,6 +44,7 @@ const Diagnostic = ({ route }) => {
     }, [isfocused, getAllDiagnostics]);
 
     const handleAddDiagnostic = () => {
+        AsyncStorage.setItem("consulationId",consultationId)
         navigation.navigate("new Diagnostic")
     };
 

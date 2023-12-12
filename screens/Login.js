@@ -50,7 +50,8 @@ export default function Login() {
     "password":password
   };
   const handleSignIn = async () => {
-    let response = await axios.post(API_BASE_URL+"/api/authenticate",dataUser)
+    console.log("Check test");
+    let responsse = await axios.post(API_BASE_URL+"/api/authenticate",dataUser)
         .then(response =>{
           console.log(response.data)
           const token = response.data.id_token;
@@ -100,6 +101,14 @@ export default function Login() {
                 onChangeText={(password) => setPassword(password)}
             />
           </View>
+           
+            {
+              showError && 
+              <View style={{color:"red", justifyContent:"center",display:"flex", alignItems:"center"}}>
+              <Text style={{color:"red", fontSize:16}}>Invalid authentication credentials.</Text>
+            </View>
+            }
+        
           <TouchableOpacity onPress={handleSignIn}style={styles.loginBtn}>
             <Text style={styles.loginText}>LOGIN</Text>
           </TouchableOpacity>
