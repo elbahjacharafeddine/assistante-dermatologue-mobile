@@ -44,7 +44,7 @@ const Diagnostic = ({ route }) => {
     }, [isfocused, getAllDiagnostics]);
 
     const handleAddDiagnostic = () => {
-        AsyncStorage.setItem("consulationId",consultationId)
+        AsyncStorage.setItem("consultationId",consultationId)
         navigation.navigate("new Diagnostic")
     };
 
