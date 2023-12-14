@@ -94,7 +94,7 @@ const DiagnosticCard = ({ item }) => {
                                         <Text style={styles.titre}>Symptoms</Text>
                                         {
                                             symptoms.map((e,index) =>(
-                                                <Text style={styles.paragraphe}>* {e}</Text>
+                                                <Text key={index} style={styles.paragraphe}>* {e}</Text>
                                             ))
                                         }
                                     </View>

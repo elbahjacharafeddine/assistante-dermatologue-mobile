@@ -40,37 +40,21 @@ export default function Drawer() {
   useEffect(() => {
     const getDermatologue = async () => {
       try {
-          await getToken()
-        const response = await axios.get(API_BASE_URL + '/api/dermatologues/655d346b1ccaf853d2b2b2a4',
-
+        const username = await AsyncStorage.getItem("username");
+        const token = await AsyncStorage.getItem("token");
+        const response = await axios.get(API_BASE_URL + '/api/dermatologues/profile/'+username,
           {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`
             },
           }).then((response) => {
-           
-            // const alertMessage = consultationsData.map(consultation => (
-            //   `Nom du patient: ${consultation.rendezVous.patient.user.firstName} ${consultation.rendezVous.patient.user.lastName}\n` +
-            //   `Date de rendez-vous: ${consultation.rendezVous.dateDebut}\n` +
-            //   `Téléphone: ${consultation.rendezVous.patient.telephone}\n` +
-            //   '------------------------------------'
-            // )).join('\n');
-            const dermatologueDrawer = response.data;
-            setDermatologueDrawer(dermatologueDrawer);
-    
-            const { firstName, lastName } = dermatologueDrawer.user;
-            setFirstName(firstName);
-            setLastName(lastName);
-    
-
-            // Affichez les informations dans une alerte
-            // alert(`Prénom: ${firstName}\nNom de famille: ${lastName}`);
+            setFirstName(response.data.user.firstName)
+            setLastName(response.data.user.lastName)
           });
 
       } catch (error) {
-        console.error(error);
-          console.log("error ici ")
+        console.error(error + " in get User profile");
       }
     };
 
@@ -113,12 +97,6 @@ export default function Drawer() {
                       color: "#111"
                     }}
                   >  {` ${firstName} ${lastName}`}</Text>
-                  <Text 
-                    style={{
-                      fontSize: 16,
-                      color: "#111"
-                    }}
-                  >Dermatologue</Text>
                 </View>
                 <DrawerItemList {...props} />
               </SafeAreaView>

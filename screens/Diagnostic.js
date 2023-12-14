@@ -58,18 +58,24 @@ const Diagnostic = ({ route }) => {
                 style={styles.searchInput}
                 placeholder="Search..."
             />
-            <ScrollView refreshControl={
+            {/* <ScrollView refreshControl={
                 <RefreshControl
                     refreshing={isRefreshing}
                     onRefresh={getAllDiagnostics}
                 />
-            }>
+            }> */}
                 <FlatList
                     data={diagnostics}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item}
+                    keyExtractor={(item, index) => index.toString()}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={getAllDiagnostics}
+                        />
+                    }
                 />
-            </ScrollView>
+            {/* </ScrollView> */}
             <View style={styles.modalStyle}>
                 <TouchableOpacity
                     style={styles.addButtonText}

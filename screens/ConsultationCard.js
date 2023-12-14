@@ -41,7 +41,7 @@ const ConsultationCard = ({ item }) => {
                 <View style={styles.imageContainer}>
                     <Image
                         style={styles.image}
-                        source={require('../assets/images/logo.png')}
+                        source={require('../assets/images/doctor-patient.png')}
                     />
                 </View>
                 <View style={{

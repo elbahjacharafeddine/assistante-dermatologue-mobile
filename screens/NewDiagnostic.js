@@ -172,14 +172,18 @@ const showData = () =>{
   console.log(data.maladiesDetected);
 }
 
-  useEffect(async () => {
+useEffect(() => {
+  const requestMediaPermission = async () => {
     if (Platform.OS !== 'web') {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         alert('Permission denied !!');
       }
     }
-  }, []);
+  };
+
+  requestMediaPermission();
+}, []);
 
   const pickImage = async () => {
     try {
@@ -317,7 +321,7 @@ const handleSubmit = async () => {
       resolve();
       setNotifyGetMaladie(true);
     });
-    setVisible(false);
+    // setVisible(false);
   } catch (error) {
     console.error(error);
     setVisible(false);
@@ -437,18 +441,20 @@ const getMaladieByAbbr = async() =>{
         </View>
       </TouchableOpacity>
 
+      {image && 
       <ScrollView style={styles.scrollView}>
-        <View style={styles.checkboxContainer}>
-          {symptoms.map((symptom, index) => (
-            <CheckBox
-              key={index}
-              title={symptom}
-              checked={checkBoxValues[symptom]}
-              onPress={() => handleCheckBoxChange(symptom)}
-            />
-          ))}
-        </View>
-      </ScrollView>
+      <View style={styles.checkboxContainer}>
+        {symptoms.map((symptom, index) => (
+          <CheckBox
+            key={index}
+            title={symptom}
+            checked={checkBoxValues[symptom]}
+            onPress={() => handleCheckBoxChange(symptom)}
+          />
+        ))}
+      </View>
+    </ScrollView>
+      }
 
       {
         <Modal visible={visible} transparent={true} animationType="slide">

@@ -19,7 +19,6 @@ const Consultations = () => {
       const t = await AsyncStorage.getItem("token");
       const username = await AsyncStorage.getItem("username")
       const response = await axios.get(
-          // API_BASE_URL + '/api/consultations/listeConsultations/dematologue/6547cb2707c44a7f9323eaff',
           API_BASE_URL + '/api/consultations/listeConsultations/dermato/'+username,
           {
             headers: {

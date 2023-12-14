@@ -1,104 +1,187 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, Button } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage/src/AsyncStorage';
+
 import { API_BASE_URL } from './apiConfig';
+
 const Profile = () => {
-  const [dermatologueDrawer,setDermatologueDrawer]=useState();
+  const [dermatologueDrawer, setDermatologueDrawer] = useState();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const token ="eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YXNzaW5lIiwiZXhwIjoxNzAxNDM0NTczLCJhdXRoIjoiUk9MRV9ERVJNQVRPTE9HVUUiLCJpYXQiOjE3MDEzNDgxNzN9.jqKC7Z0X1OdTyL6Oakas7eBSxH5VM8VAzcFkLvtrHN-Mdm5tng_d8gAMuUCRfQCu9hiLj5Jwcvo0A5kt1EjrgQ"
+
+  const [nombreConsultation, setNombreConsultation] = useState(0);
+  const [nombrePatient, setPatient] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await getDermatologue();
+      await getNombrePatient();
+    } catch (error) {
+      console.error('Error during refresh:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const getDermatologue = async () => {
+    try {
+      const username = await AsyncStorage.getItem('username');
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.get(API_BASE_URL + '/api/dermatologues/profile/' + username, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setFirstName(response.data.user.firstName);
+      setLastName(response.data.user.lastName);
+    } catch (error) {
+      console.error(error + ' in get User profile');
+      throw error;
+    }
+  };
+
+  const getNombrePatient = async () => {
+    try {
+      const username = await AsyncStorage.getItem('username');
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.get(API_BASE_URL + '/api/rendez-vous/statistique-data/' + username, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNombreConsultation(response.data[0]);
+      setPatient(response.data[1]);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    const getDermatologue = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(API_BASE_URL + '/api/dermatologues/655d346b1ccaf853d2b2b2a4',
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
-          }).then((response) => {
-           
-            // const alertMessage = consultationsData.map(consultation => (
-            //   `Nom du patient: ${consultation.rendezVous.patient.user.firstName} ${consultation.rendezVous.patient.user.lastName}\n` +
-            //   `Date de rendez-vous: ${consultation.rendezVous.dateDebut}\n` +
-            //   `Téléphone: ${consultation.rendezVous.patient.telephone}\n` +
-            //   '------------------------------------'
-            // )).join('\n');
-            const dermatologueDrawer = response.data;
-            setDermatologueDrawer(dermatologueDrawer);
-    
-            const { firstName, lastName } = dermatologueDrawer.user;
-            setFirstName(firstName);
-            setLastName(lastName);
-    
-
-            // Affichez les informations dans une alerte
-            // alert(`Prénom: ${firstName}\nNom de famille: ${lastName}`);
-          });
-
+        await getDermatologue();
+        await getNombrePatient();
       } catch (error) {
-        console.error(error);
+        console.error('Error during initial fetch:', error);
       }
     };
 
-    getDermatologue();
-  }, []);
-  const user = {
-    avatar: "https://www.bootdey.com/img/Content/avatar/avatar1.png",
-     coverPhoto: "https://www.bootdey.com/image/280x280/FF00FF/000000",
-    name: "John Smith"
-  };
-  
+    fetchData();
+  }, []); 
+
   return (
-    <View style={styles.container}>
-      {/* <Image source={{ uri: user.coverPhoto }} style={styles.coverPhoto} /> */}
-      <View style={styles.avatarContainer}>
-        <Image source={{ uri: user.avatar }} style={styles.avatar} />
-        <Text style={styles.name}>{` ${firstName} ${lastName}`}</Text>
+    <ScrollView
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <Image style={styles.avatar} source={require('../screens/medecin.png')} />
+          <Text style={styles.name}>{firstName} {lastName}</Text>
+        </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button title="Like" onPress={() => {}} />
-        <Button title="Message" onPress={() => {}} />
-        <Button title="Share" onPress={() => {}} />
+
+
+      <View style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        // position: 'absolute',
+        backgroundColor: '#ffffff',
+        width:"100%",
+
+      }} >
+        <View style={styles.detailContent}>
+          <Text style={styles.title}>Today Visits</Text>
+          <Text style={styles.count}>{nombreConsultation}</Text>
+        </View>
+        <View style={styles.detailContent}>
+          <Text style={styles.title}>Patients treated</Text>
+          <Text style={styles.count}>{nombrePatient}</Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    alignItems: 'center',
+  header: {
+    backgroundColor: '#00CED1',
+    marginTop:10,
+  
   },
-  coverPhoto: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'cover',
-  },
-  avatarContainer: {
+  headerContent: {
+    padding: 30,
     alignItems: 'center',
-    marginTop: -75,
   },
   avatar: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 5,
+    width: 130,
+    height: 130,
+    borderRadius: 63,
+    borderWidth: 4,
     borderColor: 'white',
+    marginBottom: 10,
   },
   name: {
-    marginTop: 15,
+    fontSize: 22,
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  profileDetail: {
+    alignSelf: 'center',
+    marginTop: 230,
+    alignItems: 'center',
+    flexDirection: 'row',
+    position: 'absolute',
+    backgroundColor: '#ffffff',
+  },
+  detailContent: {
+    margin: 10,
+    alignItems: 'center',
+  },
+  title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    color: '#00CED1',
+  },
+  count: {
+    fontSize: 24,
+  },
+  bodyContent: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 30,
+    marginTop: 40,
+  },
+  textInfo: {
+    fontSize: 18,
+    marginTop: 20,
+    color: '#696969',
   },
   buttonContainer: {
+    marginTop: 10,
+    height: 45,
     flexDirection: 'row',
-    marginTop: 20,
-    width: '60%',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 250,
+    borderRadius: 30,
+    backgroundColor: '#00CED1',
   },
-});
-
+  description: {
+    fontSize: 20,
+    color: '#00CED1',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+})
 
 export default Profile;
