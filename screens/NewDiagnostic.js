@@ -7,6 +7,7 @@ import { API_BASE_MODEL, API_BASE_URL } from './apiConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Modal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { set } from 'lodash';
 
 
 
@@ -18,6 +19,9 @@ export default function NewDiagnostic() {
   const [image, setImage] = useState(null);
   const [imageString, setImageString] = useState(null);
 
+  const [probability, setProbability] = useState(0)
+  const [probablilties, setProbabilities] = useState([])
+  const [maladiesDetected, setMaladiesDetected] = useState([])
   const [selectedSymptom, setSelectedSymptom] = useState([]);
   const symptoms = ['Rougeur', 'Démangeaisons', 'Irritation', 'Sécheresse', 'Eruption cutanée', 'Desquamation', 'Taches sombres'];
   const [checkBoxValues, setCheckBoxValues] = useState({
@@ -30,9 +34,42 @@ export default function NewDiagnostic() {
     "Taches sombres": false,
   });
 
+  const [data, setData] = useState({
+    send: false,
+    dateDiagnostic: "2023-12-13T08:09:02.385Z",
+    picture: "",
+    pictureContentType: "image/jpeg",
+    description: "",
+    prescription: "",
+    probability: 0,
+    probabilities: [],
+    symptoms: [],
+    consultations: {
+      id: "",
+    },
+    maladies: [
+      {
+        id: "",
+        fullName: "",
+        abbr: ""
+      }
+    ],
+    maladiesDetected: [
+      {
+        id: "",
+        fullName: "",
+        abbr: "",
+        haveId:false,
+      },
+    ],
+  });
+
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState(false)
   const navigation = useNavigation();
+
+  const [notifyGetMaladie, setNotifyGetMaladie] = useState(false)
+  const [notifySendData, setNotifySendData] = useState(false)
 
   
   const handleCheckBoxChange = (symptom) => {
@@ -48,7 +85,7 @@ export default function NewDiagnostic() {
     setVisible(true)
     const s = symptoms.filter((symptom) => checkBoxValues[symptom]);
     console.log('Selected Symptoms:', s);
-    dataJson.symptoms=s
+    data.symptoms=s
     const apiUrl = API_BASE_MODEL + '/disease/predict';
     
 
@@ -68,8 +105,11 @@ export default function NewDiagnostic() {
       })
       .then(response =>{
         console.log(response.data);
-        // dataJson.probability = response.data.probability
-        
+        setData((prevData) => ({
+          ...prevData,
+          probability:response.data.probability,
+          probabilities: response.data.probabilities,
+        }));
       }).catch(error =>{
         console.log(error);
       })
@@ -78,49 +118,40 @@ export default function NewDiagnostic() {
       await sendDataToBack();
   };
 
-  const dataJson = {
-    "dateDiagnostic": "2023-12-13T08:09:02.385Z",
-    "picture": "",
-    "pictureContentType": "image/jpeg",
-    "description": "",
-    "prescription": "",
-    "probability": 61.94,
-    "probabilities": [
-        9.86,
-        1.18,
-        0.06,
-        26.76,
-        0.04,
-        61.94,
-        0.17
-    ],
-    "symptoms":selectedSymptom,
-    "consultations": {
-        "id": "6578587dd20828576b9e91fc",
-        "dateConsultation": "2023-12-12T13:00:00Z"
-    },
-    "maladies": [
-        {
-            "id": "656a2065816d2001e3943ff6",
-            "fullName": "Melanocytic nevi",
-            "abbr": "nv"
-        }
-    ],
-    "maladiesDetected": [
-        {
-            "id": "656a2065816d2001e3943ff6",
-            "fullName": "Melanocytic nevi",
-            "abbr": "nv"
-        }
-    ]
-}
+//   const dataJson = {
+//     "dateDiagnostic": "2023-12-13T08:09:02.385Z",
+//     "picture": "",
+//     "pictureContentType": "image/jpeg",
+//     "description": "",
+//     "prescription": "",
+//     "probability": probability,
+//     "probabilities": probablilties,
+//     "symptoms":selectedSymptom,
+//     "consultations": {
+//         "id": "6578587dd20828576b9e91fc",
+//         "dateConsultation": "2023-12-12T13:00:00Z"
+//     },
+//     "maladies": [
+//         {
+//             "id": "656a2065816d2001e3943ff6",
+//             "fullName": "Melanocytic nevi",
+//             "abbr": "nv"
+//         }
+//     ],
+//     "maladiesDetected": [
+//         {
+//             "id": "656a2065816d2001e3943ff6",
+//             "fullName": "Melanocytic nevi",
+//             "abbr": "nv"
+//         }
+//     ]
+// }
 
   const sendDataToBack = useCallback( async () =>{
     const consultation_Id = await AsyncStorage.getItem("consultationId")
     try {
       const token = await AsyncStorage.getItem("token");
-      dataJson.consultations.id = consultation_Id;
-      const response = await axios.post(API_BASE_URL+"/api/diagnostics",dataJson,{
+      const response = await axios.post(API_BASE_URL+"/api/diagnostics",data,{
         headers:{
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
@@ -131,11 +162,14 @@ export default function NewDiagnostic() {
       console.log(error);
     }
     setVisible(false)
-    navigation.navigate('Diagnostic', {consultationId:consultation_Id});
+    // navigation.navigate('Diagnostic', {consultationId:consultation_Id});
   })
 
 const showData = () =>{
-  console.log(dataJson);
+  console.log(data.probabilities);
+  console.log(data.probability);
+  console.log(data.symptoms);
+  console.log(data.maladiesDetected);
 }
 
   useEffect(async () => {
@@ -148,18 +182,49 @@ const showData = () =>{
   }, []);
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    console.log(result);
-    if (!result.cancelled) {
-      setImage(result.assets[0].uri);
-      await showImage()
+    try {
+      const consultation_Id = await AsyncStorage.getItem("consultationId");
+      setData((prevData) => ({
+        ...prevData,
+        consultations: {
+          id: consultation_Id,
+        },
+      }));
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        aspect: [4, 3],
+        quality: 1,
+      });
+  
+      console.log(result);
+  
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+        const imagePath = result.assets[0].uri;
+  
+        // Utiliser fetch pour obtenir le blob de l'image
+        const response = await fetch(imagePath);
+        const blob = await response.blob();
+  
+        // Convertir le blob en base64
+        const reader = new FileReader();
+        
+        reader.onload = () => {
+          const base64data = reader.result.split(',')[1];
+          
+          setData((prevData) => ({
+            ...prevData,
+            picture: base64data,
+          }));
+        };
+  
+        reader.readAsDataURL(blob);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération ou du traitement de l\'image:', error);
     }
-    
   };
+  
 
 
   const showImage = async () => {
@@ -172,16 +237,194 @@ const showData = () =>{
         // var base64data = reader.result;
         var base64data = reader.result.split(',')[1];
         // console.log(base64data);
-        dataJson.picture = base64data
+        data.picture = base64data
+        setData((prevData) => ({
+          ...prevData,
+          picture: base64data,
+        }));
     };
     reader.readAsDataURL(blob);
     console.log("ELBAHJA HHHHHHH");
 }
+
+const updateData = async () => {
+  const consultation_Id =  await AsyncStorage.getItem("consultationId")
+
+  setData((prevData) => ({
+    ...prevData,
+    consultations: {
+      ...prevData.consultations,
+      id: consultation_Id,
+    },
+    probability:probability,
+    probabilities: probablilties,
+
+  }))
+};
+
+
+const handleSubmit = async () => {
+  setVisible(true);
+  try {
+    // const token = await AsyncStorage.getItem("token");
+
+    const s = symptoms.filter((symptom) => checkBoxValues[symptom]);
+
+    console.log('Selected Symptoms:', s);
+    const apiUrl = API_BASE_MODEL + '/disease/predict';
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'image',
+    });
+
+    const response = await axios.post(apiUrl, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log(response.data);
+    await new Promise((resolve) => {
+      setData((prevData) => ({
+        ...prevData,
+        probability: response.data.probability,
+        probabilities: response.data.probabilities,
+        symptoms:s,
+        send: !data.send,
+      }));
+
+      setData((prevData) => ({
+        ...prevData,
+        maladiesDetected: [
+          {
+            ...prevData.maladiesDetected[0],
+            abbr: response.data.predicted_disease,
+            
+          },
+        ],
+      }));
+
+      const newDate = new Date().toISOString();
+      setData((prevData) => ({
+        ...prevData,
+        dateDiagnostic: newDate,
+      }));
+
+      console.log("We are changing the value of abbr by handleSubmit");
+      resolve();
+      setNotifyGetMaladie(true);
+    });
+    setVisible(false);
+  } catch (error) {
+    console.error(error);
+    setVisible(false);
+  }
+};
+
+
+
+
+useEffect(() =>{
+  if (notifyGetMaladie) {
+    getMaladieByAbbr();
+  }
+},[notifyGetMaladie])
+
+
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    const consultation_Id = await AsyncStorage.getItem("consultationId");
+    if (notifySendData) {
+      try {
+        const token = await AsyncStorage.getItem("token");
+
+        const res = await axios.post(API_BASE_URL + "/api/diagnostics", data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setData((prevData) => ({
+          ...prevData,
+          probability: 0,
+          probabilities: [],
+          symptoms:[],
+          send: false,
+        }));
+
+        // console.log(res.data);
+        setVisible(false);
+        navigation.navigate('Diagnostic', {consultationId:consultation_Id});
+      } catch (error) {
+        console.error(error);
+        setVisible(false);
+        navigation.navigate('Diagnostic', {consultationId:consultation_Id});
+      }
+    }
+  };
+
+  fetchData();
+}, [notifySendData]);
+
+
+const getMaladieByAbbr = async() =>{
+  try {
+    const token = await AsyncStorage.getItem("token");
+    axios.get(API_BASE_URL+"/api/maladies/maladie/name/"+data.maladiesDetected[0].abbr,{
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    }).then(response =>{
+      console.log(response.data);
+      setData((prevData) => ({
+        ...prevData,
+        maladiesDetected: [
+          {
+            ...prevData.maladiesDetected[0],
+            id: response.data.maladie.id,
+          },
+        ],
+      }));
+
+      setData((prevData) => ({
+        ...prevData,
+        maladies: [
+          {
+            ...prevData.maladies[0],
+            id: response.data.maladie.id,
+          },
+        ],
+      }));
+
+      setData((prevData) => ({
+        ...prevData,
+        send: !data.send,
+      }));
+
+      console.log("We are changing the value of id of maladie by getMaladiesByAbbr ");
+      setNotifySendData(true)
+    }).catch(error =>{
+      console.log(error);
+    })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+
+
   
 
   return (
     <View style={styles.container}>
-      <Button  title='Show image' onPress={showImage}/>
       <TouchableOpacity onPress={pickImage}>
         <View style={styles.card}>
           <View style={styles.imageContainer}>
@@ -216,10 +459,9 @@ const showData = () =>{
         </View>
       </Modal>
       }
-      <Button title='Show Data' onPress={showData}/>
 
       {
-        image && <Button title="Confirm" onPress={ConfirmSenddata} />
+        image && <Button title="Confirm" onPress={handleSubmit} />
       }
     </View>
   );
