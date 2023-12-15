@@ -7,7 +7,12 @@ import NewDiagnostic from './screens/NewDiagnostic'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
+import {LogBox} from "react-native";
 
+LogBox.ignoreLogs([
+"ViewPropTypes will be removed",
+"ColorPropType will be removed",
+])
 
 import {decode, encode} from 'base-64'
 

@@ -164,7 +164,7 @@ export default function Drawer() {
           }}
           component={Profile}
         />
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="Settings"
           options={{
             drawerLabel: "Settings",
@@ -174,9 +174,9 @@ export default function Drawer() {
             )
           }}
           component={Settings}
-        />
+        /> */}
 
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="Backups"
           options={{
             drawerLabel: "Backups",
@@ -186,9 +186,9 @@ export default function Drawer() {
             )
           }}
           component={Backups}
-        />
+        /> */}
 
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="Get Premium"
           options={{
             drawerLabel: "Get Premuim",
@@ -198,8 +198,8 @@ export default function Drawer() {
             )
           }}
           component={GetPremium}
-        />
-        <Drawer.Screen
+        /> */}
+        {/* <Drawer.Screen
           name="Rate this App"
           options={{
             drawerLabel: "Rate this App",
@@ -209,9 +209,9 @@ export default function Drawer() {
             )
           }}
           component={RateApp}
-        />
+        /> */}
 
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="Contact"
           options={{
             drawerLabel: "Contact",
@@ -221,7 +221,7 @@ export default function Drawer() {
             )
           }}
           component={Contact}
-        />
+        /> */}
       </Drawer.Navigator>
    
   )
