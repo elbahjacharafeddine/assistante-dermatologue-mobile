@@ -200,7 +200,7 @@ useEffect(() => {
         quality: 1,
       });
   
-      console.log(result);
+      // console.log(result);
   
       if (!result.canceled) {
         setImage(result.assets[0].uri);
@@ -317,7 +317,7 @@ const handleSubmit = async () => {
         dateDiagnostic: newDate,
       }));
 
-      console.log("We are changing the value of abbr by handleSubmit");
+      // console.log("We are changing the value of abbr by handleSubmit");
       resolve();
       setNotifyGetMaladie(true);
     });
@@ -386,7 +386,7 @@ const getMaladieByAbbr = async() =>{
         Authorization: `Bearer ${token}`,
       }
     }).then(response =>{
-      console.log(response.data);
+      // console.log(response.data);
       setData((prevData) => ({
         ...prevData,
         maladiesDetected: [
@@ -412,7 +412,7 @@ const getMaladieByAbbr = async() =>{
         send: !data.send,
       }));
 
-      console.log("We are changing the value of id of maladie by getMaladiesByAbbr ");
+      // console.log("We are changing the value of id of maladie by getMaladiesByAbbr ");
       setNotifySendData(true)
     }).catch(error =>{
       console.log(error);

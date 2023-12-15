@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, RefreshControl, Alert, Modal, Pressable } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage/src/AsyncStorage';
 
 import { API_BASE_URL } from './apiConfig';
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+import { Button } from 'react-native-paper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
   const [dermatologueDrawer, setDermatologueDrawer] = useState();
@@ -14,6 +18,7 @@ const Profile = () => {
   const [nombrePatient, setPatient] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
+  const navigation = useNavigation()
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -62,6 +67,23 @@ const Profile = () => {
     }
   };
 
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleLogout = async () => {
+    setModalVisible(true);
+  };
+  const cancelLogout = () => {
+    setModalVisible(false);
+  };
+
+  const confirmLogout = async () =>{
+  await AsyncStorage.removeItem("token")
+  await AsyncStorage.removeItem("username")
+  navigation.navigate("Login");
+  setModalVisible(false);
+  }
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -83,6 +105,15 @@ const Profile = () => {
         <View style={styles.headerContent}>
           <Image style={styles.avatar} source={require('../screens/medecin.png')} />
           <Text style={styles.name}>{firstName} {lastName}</Text>
+
+          <View style={styles.logoutIcon}>
+            <Icon
+              name="sign-out"
+              size={30}
+              color="#FFFFFF"
+              onPress={handleLogout}
+            />
+          </View>
         </View>
       </View>
 
@@ -108,6 +139,44 @@ const Profile = () => {
           <Text style={styles.count}>{nombrePatient}</Text>
         </View>
       </View>
+
+
+
+      <View style={styles.centeredView}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false)
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Are you sure you want to log out?</Text>
+            <View style={{
+              flexDirection:"row",
+              display:"flex",
+              justifyContent:"center",
+              alignItems:"center"
+            }}>
+
+            <Pressable
+              style={[styles.button, styles.buttonClose, {marginRight:45, width:70}]}
+              onPress={() => cancelLogout()}>
+              <Text style={styles.textStyle}>No</Text>
+            </Pressable>
+
+            <Pressable
+              style={[styles.button, styles.confirmButton, {marginLeft:45, width:70}]}
+              onPress={() => confirmLogout()}>
+              <Text style={styles.textStyle}>Yes</Text>
+            </Pressable>
+              
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
     </ScrollView>
   );
 };
@@ -115,7 +184,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
   header: {
     backgroundColor: '#00CED1',
-    marginTop:10,
+    marginTop:3,
   
   },
   headerContent: {
@@ -181,7 +250,64 @@ const styles = StyleSheet.create({
     color: '#00CED1',
     marginTop: 10,
     textAlign: 'center',
-  },
-})
+  },
+logoutIcon: {
+  position: 'absolute',
+  top: 10,
+  right: 10,
+},
+
+
+
+
+
+
+centeredView: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: 22,
+},
+modalView: {
+  margin: 20,
+  backgroundColor: 'white',
+  borderRadius: 20,
+  padding: 35,
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 5,
+},
+button: {
+  borderRadius: 12,
+  padding: 10,
+  elevation: 2,
+},
+buttonOpen: {
+  backgroundColor: '#F194FF',
+},
+buttonClose: {
+  backgroundColor: '#2196F3',
+},
+confirmButton: {
+  backgroundColor: '#f20a0a',
+},
+textStyle: {
+  color: 'white',
+  fontWeight: 'bold',
+  textAlign: 'center',
+},
+modalText: {
+  fontSize:20,
+  marginBottom: 20,
+  textAlign: 'center',
+},
+}
+)
 
 export default Profile;

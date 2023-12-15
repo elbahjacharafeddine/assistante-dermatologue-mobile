@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from "expo-status-bar";
 import { API_BASE_URL } from './apiConfig';
-
+import { useIsFocused } from '@react-navigation/native';
 
 
 import {
@@ -27,7 +27,8 @@ export default function Login() {
 
   const navigation = useNavigation();
   const [showError, setError] = useState(false);
-
+  const [shouldlogin, setLogin] = useState(null)
+  const isFocused = useIsFocused();
 
     const saveToken = async (token) =>{
         try {
@@ -60,6 +61,8 @@ export default function Login() {
           if (object.auth ==="ROLE_DERMATOLOGUE"){
               asyncStorage.setItem("token",token)
               asyncStorage.setItem("username",dataUser.username);
+              setUsername("")
+              setPassword("")
             navigation.navigate("Dermatologist assistant");
           }
           else {
@@ -75,12 +78,41 @@ export default function Login() {
 
   };
 
+  const checkValidationToken = async () =>{
+    console.log("we will check token");
+    try {
+      const token = await asyncStorage.getItem("token")
+        const response = await axios.get(API_BASE_URL+"/api/dermatologues",{
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }).then(response =>{
+          console.log("Token valide");
+          navigation.navigate("Dermatologist assistant");
+        }).catch(error =>{
+          console.log("token invalid");
+          setLogin(true)
+        })
+      }    
+    catch (error) {
+      setLogin(true)
+    }
+  }
+
+useEffect(() => {
+    if (isFocused) {
+      checkValidationToken();
+    }
+  }, [isFocused]);
 
 
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       
+      {
+        shouldlogin && 
         <View style={styles.container}>     
         <Text style={styles.connectText}>Sign in</Text>
           <View style={styles.inputView}>
@@ -89,7 +121,8 @@ export default function Login() {
                 placeholder="Username"
 
                 placeholderTextColor="#003f5c"
-                onChangeText={(email) => setUsername(email)}
+                onChangeText={(username) => setUsername(username)}
+                value={username}
             />
           </View>
           <View style={styles.inputView}>
@@ -99,6 +132,7 @@ export default function Login() {
                 placeholderTextColor="#003f5c"
                 secureTextEntry={true}
                 onChangeText={(password) => setPassword(password)}
+                value={password}
             />
           </View>
            
@@ -116,6 +150,7 @@ export default function Login() {
             <Text style={styles.forgot_button}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
+      }
         </ImageBackground >
 
   );
