@@ -27,6 +27,7 @@ const Consultations = () => {
             },
           }
       );
+      
       setConsultations(response.data);
     } catch (error) {
       console.log(error);

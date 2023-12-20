@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Image, Platform, View, StyleSheet, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { CheckBox } from 'react-native-elements';
@@ -9,12 +9,18 @@ import { Modal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { set } from 'lodash';
 
-
-
-
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {Camera} from 'expo-camera'
 
 export default function NewDiagnostic() {
 
+
+  const [startCamera, setStartCamera] = useState(false);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+  const [flashMode, setFlashMode] = useState('off');
+  const camera = useRef(null);
 
   const [image, setImage] = useState(null);
   const [imageString, setImageString] = useState(null);
@@ -70,6 +76,70 @@ export default function NewDiagnostic() {
 
   const [notifyGetMaladie, setNotifyGetMaladie] = useState(false)
   const [notifySendData, setNotifySendData] = useState(false)
+
+  const __startCamera = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    console.log(status);
+    if (status === 'granted') {
+      setStartCamera(true);
+    } else {
+      Alert.alert('Access denied');
+    }
+  };
+
+  const __takePicture = async () => {
+    if (camera.current) {
+      const photo = await camera.current.takePictureAsync();
+      console.log(photo);
+      setPreviewVisible(true);
+      setCapturedImage(photo);
+    }
+  };
+
+  useEffect(()=>{
+    if(previewVisible){
+      __takePicture()
+    }
+  },[previewVisible])
+
+
+
+
+
+
+
+  const __savePhoto = () => {
+    // Implement your save photo logic here
+  };
+
+  const __retakePicture = () => {
+    setCapturedImage(null);
+    setPreviewVisible(false);
+    __startCamera();
+  };
+
+  const __handleFlashMode = () => {
+    if (flashMode === 'on') {
+      setFlashMode('off');
+    } else if (flashMode === 'off') {
+      setFlashMode('on');
+    } else {
+      setFlashMode('auto');
+    }
+  };
+
+  const __switchCamera = () => {
+    setCameraType((prevType) =>
+      prevType === Camera.Constants.Type.back
+        ? Camera.Constants.Type.front
+        : Camera.Constants.Type.back
+    );
+  };
+
+
+
+
+
 
   
   const handleCheckBoxChange = (symptom) => {
@@ -439,6 +509,12 @@ const getMaladieByAbbr = async() =>{
             {image == null ? <Text>Tap here to upload your image</Text> : <Text></Text>}
           </View>
         </View>
+      
+        <TouchableOpacity  onPress={__startCamera}>
+          <View style={{marginLeft:10}}>
+            <Icon name="camera" size={20} color="black" />
+          </View>
+        </TouchableOpacity>
       </TouchableOpacity>
 
       {image && 
@@ -469,6 +545,13 @@ const getMaladieByAbbr = async() =>{
       {
         image && <Button title="Confirm" onPress={handleSubmit} />
       }
+
+      {/* {
+        startCamera &&
+        <Camera
+          style={{flex: 1,width:"100%"}}
+        ></Camera>
+      } */}
     </View>
   );
 }

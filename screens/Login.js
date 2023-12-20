@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from "expo-status-bar";
 import { API_BASE_URL } from './apiConfig';
 import { useIsFocused } from '@react-navigation/native';
-import ViewPropTypes from 'deprecated-react-native-prop-types';
 
 import {
   StyleSheet,
